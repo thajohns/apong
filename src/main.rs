@@ -45,7 +45,7 @@ fn run_game(
         ball_vel: vector![0.1, 0.08],
         x_bounds: (0.0, 1.0),
         y_bounds: (-0.5, 0.5),
-        paddles: [Paddle::new(0.02, 0.0, 0.1), Paddle::new(0.98, 0.0, 0.1)],
+        paddles: [Paddle::new(0.02, 0.0, 0.1), Paddle::new(0.98, 0.0, 1.0)],
     };
 
     while !exit.load(atomic::Ordering::Relaxed) {
