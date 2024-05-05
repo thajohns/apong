@@ -45,9 +45,10 @@ impl World {
     pub fn to_audio_state(&self, psp: &PSpaceTransform) -> AudioWorldState {
         let ys = [self.ball_pos.y, self.paddles[0].midpoint(), self.paddles[1].midpoint()];
         let fs = [psp.tf(ys[0]), psp.tf(ys[1]), psp.tf(ys[2])];
+        let xd = (self.ball_pos.x.sqrt() * (1.0 - self.ball_pos.x).sqrt());
         AudioWorldState {
             fs,
-            dc: self.ball_pos.x,
+            dc: xd * xd,
         }
     }
 }

@@ -10,7 +10,6 @@ pub struct AudioWorldState {
 }
 
 pub fn run_audio(audio_state_channel: mpsc::Receiver<AudioWorldState>, exit: Arc<AtomicBool>) {
-
     let host = cpal::default_host();
     let device = host
         .default_output_device()
@@ -71,8 +70,8 @@ pub fn run_audio(audio_state_channel: mpsc::Receiver<AudioWorldState>, exit: Arc
             for i in 0..data.len() {
                 let mut x = 0.0;
                 x += paddle1.step(Δt);
-                x += paddle2.step(Δt);
-                x += ball.step(Δt) * 0.5;
+                x += paddle2.step(Δt) * 0.1;
+                x += ball.step(Δt) * 0.6;
                 x *= 0.3;
                 data[i] = x as f32;
             }

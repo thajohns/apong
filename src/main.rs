@@ -14,7 +14,7 @@ fn main() {
     let exit = Arc::new(AtomicBool::new(false));
     let (key_vec_send, key_vec_recv) = mpsc::sync_channel(8);
     let (audio_state_send, audio_state_recv) = mpsc::sync_channel(8);
-    let psp = PSpaceTransform::from_points((-0.5, 200.0), (0.5, 500.0));
+    let psp = PSpaceTransform::from_points((-0.5, 100.0), (0.5, 200.0));
     println!("psp: {psp:?}");
     let e2 = exit.clone();
     let t1 = std::thread::spawn(move || {
@@ -40,7 +40,7 @@ fn run_game(key_vec_recv: mpsc::Receiver<[bool; 2]>, psp: &PSpaceTransform, audi
         ball_vel: vector![0.1, 0.08],
         x_bounds: (0.0, 1.0),
         y_bounds: (-0.5, 0.5),
-        paddles: [Paddle::new(0.12, 0.0, 0.1), Paddle::new(0.88, 0.0, 0.1)],
+        paddles: [Paddle::new(0.02, 0.0, 0.1), Paddle::new(0.98, 0.0, 0.1)],
     };
 
     while !exit.load(atomic::Ordering::Relaxed) {
