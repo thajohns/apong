@@ -1,5 +1,5 @@
-use crate::PSpaceTransform;
-use crate::a::AudioWorldState;
+use crate::PitchSpaceTransform;
+use crate::audio::AudioWorldState;
 pub type V2f = nalgebra::Vector2<f64>;
 
 #[derive(Debug, Clone)]
@@ -42,10 +42,10 @@ impl World {
         self.ball_pos.x < self.x_bounds.0 || self.ball_pos.x > self.x_bounds.1
     }
 
-    pub fn to_audio_state(&self, psp: &PSpaceTransform) -> AudioWorldState {
+    pub fn to_audio_state(&self, psp: &PitchSpaceTransform) -> AudioWorldState {
         let ys = [self.ball_pos.y, self.paddles[0].midpoint(), self.paddles[1].midpoint()];
         let fs = [psp.tf(ys[0]), psp.tf(ys[1]), psp.tf(ys[2])];
-        let xd = (self.ball_pos.x.sqrt() * (1.0 - self.ball_pos.x).sqrt());
+        let xd = self.ball_pos.x.sqrt() * (1.0 - self.ball_pos.x).sqrt();
         AudioWorldState {
             fs,
             dc: xd * xd,

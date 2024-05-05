@@ -1,4 +1,4 @@
-mod a;
+mod audio;
 mod pong;
 mod window;
 
@@ -8,13 +8,13 @@ use std::sync::{mpsc, Arc};
 use nalgebra::vector;
 
 use pong::{Paddle, World};
-use a::{run_audio, AudioWorldState};
+use audio::{run_audio, AudioWorldState};
 
 fn main() {
     let exit = Arc::new(AtomicBool::new(false));
     let (key_vec_send, key_vec_recv) = mpsc::sync_channel(8);
     let (audio_state_send, audio_state_recv) = mpsc::sync_channel(8);
-    let psp = PSpaceTransform::from_points((-0.5, 100.0), (0.5, 200.0));
+    let psp = PitchSpaceTransform::from_points((-0.5, 100.0), (0.5, 200.0));
     println!("psp: {psp:?}");
     let e2 = exit.clone();
     let t1 = std::thread::spawn(move || {
@@ -32,7 +32,7 @@ fn main() {
     t2.join().unwrap();
 }
 
-fn run_game(key_vec_recv: mpsc::Receiver<[bool; 2]>, psp: &PSpaceTransform, audio_state_channel: mpsc::SyncSender<AudioWorldState>, exit: Arc<AtomicBool>) {
+fn run_game(key_vec_recv: mpsc::Receiver<[bool; 2]>, psp: &PitchSpaceTransform, audio_state_channel: mpsc::SyncSender<AudioWorldState>, exit: Arc<AtomicBool>) {
     let mut key_state = [false; 2];
 
     let mut game_world = World {
@@ -70,9 +70,9 @@ fn run_game(key_vec_recv: mpsc::Receiver<[bool; 2]>, psp: &PSpaceTransform, audi
 }
 
 #[derive(Debug, Clone)]
-struct PSpaceTransform(f64, f64);
+struct PitchSpaceTransform(f64, f64);
 
-impl PSpaceTransform {
+impl PitchSpaceTransform {
     fn tf(&self, x: f64) -> f64 {
         (self.0 * x + self.1).exp()
     }
