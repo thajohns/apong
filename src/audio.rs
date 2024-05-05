@@ -1,4 +1,10 @@
-use std::{f64::consts, sync::{mpsc, Arc, atomic::{AtomicBool, self}}};
+use std::{
+    f64::consts,
+    sync::{
+        atomic::{self, AtomicBool},
+        mpsc, Arc,
+    },
+};
 
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use cpal::SampleRate;
@@ -91,7 +97,7 @@ pub fn run_audio(audio_state_channel: mpsc::Receiver<AudioWorldState>, exit: Arc
 
     stream.play().expect("could not play output stream!");
 
-    while !exit.load(atomic::Ordering::Relaxed) {};
+    while !exit.load(atomic::Ordering::Relaxed) {}
 }
 
 trait Gen {

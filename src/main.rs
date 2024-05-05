@@ -7,8 +7,8 @@ use std::sync::{mpsc, Arc};
 
 use nalgebra::vector;
 
-use pong::{Paddle, World};
 use audio::{run_audio, AudioWorldState};
+use pong::{Paddle, World};
 
 fn main() {
     let exit = Arc::new(AtomicBool::new(false));
@@ -32,7 +32,12 @@ fn main() {
     t2.join().unwrap();
 }
 
-fn run_game(key_vec_recv: mpsc::Receiver<[bool; 2]>, psp: &PitchSpaceTransform, audio_state_channel: mpsc::SyncSender<AudioWorldState>, exit: Arc<AtomicBool>) {
+fn run_game(
+    key_vec_recv: mpsc::Receiver<[bool; 2]>,
+    psp: &PitchSpaceTransform,
+    audio_state_channel: mpsc::SyncSender<AudioWorldState>,
+    exit: Arc<AtomicBool>,
+) {
     let mut key_state = [false; 2];
 
     let mut game_world = World {
@@ -62,7 +67,9 @@ fn run_game(key_vec_recv: mpsc::Receiver<[bool; 2]>, psp: &PitchSpaceTransform, 
         if game_world.game_over() {
             break;
         }
-        audio_state_channel.send(game_world.to_audio_state(psp)).unwrap_or_else(|_| exit.store(true, atomic::Ordering::Relaxed)) ;
+        audio_state_channel
+            .send(game_world.to_audio_state(psp))
+            .unwrap_or_else(|_| exit.store(true, atomic::Ordering::Relaxed));
         std::thread::sleep(std::time::Duration::from_secs_f64(Δt));
     }
 

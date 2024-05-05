@@ -1,5 +1,5 @@
-use crate::PitchSpaceTransform;
 use crate::audio::AudioWorldState;
+use crate::PitchSpaceTransform;
 pub type V2f = nalgebra::Vector2<f64>;
 
 #[derive(Debug, Clone)]
@@ -23,14 +23,22 @@ impl World {
     pub fn do_physics(&mut self, Δt: f64) {
         self.ball_pos += self.ball_vel * Δt;
         // bounce off of paddles
-        if self.ball_pos.x < self.paddles[0].x && self.paddles[0].intersects_y(self.ball_pos) && self.ball_vel.x < 0.0 {
+        if self.ball_pos.x < self.paddles[0].x
+            && self.paddles[0].intersects_y(self.ball_pos)
+            && self.ball_vel.x < 0.0
+        {
             self.ball_vel.x = -self.ball_vel.x;
         }
-        if self.ball_pos.x > self.paddles[1].x && self.paddles[0].intersects_y(self.ball_pos) && self.ball_vel.x > 0.0 {
+        if self.ball_pos.x > self.paddles[1].x
+            && self.paddles[0].intersects_y(self.ball_pos)
+            && self.ball_vel.x > 0.0
+        {
             self.ball_vel.x = -self.ball_vel.x;
         }
         // bounce off of vertical boundaries of arena
-        if (self.ball_pos.y < self.y_bounds.0 && self.ball_vel.y < 0.0) || (self.ball_pos.y > self.y_bounds.1 && self.ball_vel.y > 0.0) {
+        if (self.ball_pos.y < self.y_bounds.0 && self.ball_vel.y < 0.0)
+            || (self.ball_pos.y > self.y_bounds.1 && self.ball_vel.y > 0.0)
+        {
             self.ball_vel.y = -self.ball_vel.y;
         }
         // move paddles
@@ -43,13 +51,14 @@ impl World {
     }
 
     pub fn to_audio_state(&self, psp: &PitchSpaceTransform) -> AudioWorldState {
-        let ys = [self.ball_pos.y, self.paddles[0].midpoint(), self.paddles[1].midpoint()];
+        let ys = [
+            self.ball_pos.y,
+            self.paddles[0].midpoint(),
+            self.paddles[1].midpoint(),
+        ];
         let fs = [psp.tf(ys[0]), psp.tf(ys[1]), psp.tf(ys[2])];
         let xd = self.ball_pos.x.sqrt() * (1.0 - self.ball_pos.x).sqrt();
-        AudioWorldState {
-            fs,
-            dc: xd * xd,
-        }
+        AudioWorldState { fs, dc: xd * xd }
     }
 }
 

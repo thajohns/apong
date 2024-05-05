@@ -1,6 +1,6 @@
 use std::num::NonZeroU32;
 use std::rc::Rc;
-use std::sync::atomic::{AtomicBool, self};
+use std::sync::atomic::{self, AtomicBool};
 use std::sync::{mpsc, Arc};
 
 use winit::application::ApplicationHandler;
@@ -88,7 +88,9 @@ impl ApplicationHandler for WindowApp {
                             self.key_vector[idx] = false;
                         }
                     }
-                    self.key_channel.send(self.key_vector).expect("could not send data to other thread");
+                    self.key_channel
+                        .send(self.key_vector)
+                        .expect("could not send data to other thread");
                 }
                 _ => (),
             },
@@ -97,11 +99,13 @@ impl ApplicationHandler for WindowApp {
         if self.exit.load(atomic::Ordering::Relaxed) {
             ev_loop.exit();
         }
-
     }
 }
 
-pub fn init_window(key_channel: mpsc::SyncSender<[bool; 2]>, exit: Arc<AtomicBool>) -> (EventLoop<()>, WindowApp) {
+pub fn init_window(
+    key_channel: mpsc::SyncSender<[bool; 2]>,
+    exit: Arc<AtomicBool>,
+) -> (EventLoop<()>, WindowApp) {
     let ev_loop = EventLoop::new().expect("could not create windowing event loop!");
     ev_loop.set_control_flow(ControlFlow::Poll);
     let app = WindowApp {
